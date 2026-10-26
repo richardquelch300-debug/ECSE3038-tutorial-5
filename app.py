@@ -39,3 +39,12 @@ def create_device(device: Device):
         raise HTTPException(status_code=409, detail="Device already exists")
     devices.insert_one(device.model_dump())
     return device
+
+
+@app.put("/devices/{name}")
+def put_device(name: str, device: Device):
+    doc = device.model_dump()
+    doc["name"] = name
+    devices.replace_one({"name": name}, doc, upsert=True)
+    return Device(**doc)
+
